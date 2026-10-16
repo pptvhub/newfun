@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<title>Video Player</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+
+/* ANTI COPY */
+-webkit-user-select:none;
+-moz-user-select:none;
+-ms-user-select:none;
+user-select:none;
+}
+
+/* FULLSCREEN LAYOUT */
+
+html,body{
+width:100%;
+height:100%;
+background:#000;
+font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+overflow:hidden;
+color:#fff;
+}
+
+/* sembunyikan elemen lama */
+
+header,
+.actions,
+footer{
+display:none;
+}
+
+/* container fullscreen */
+
+.main{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+display:flex;
+align-items:center;
+justify-content:center;
+background:#000;
+}
+
+/* wrapper */
+
+.video-wrapper{
+width:100%;
+height:100%;
+}
+
+/* VIDEO FULLSCREEN */
+
+video{
+width:100vw;
+height:100vh;
+object-fit:contain;
+background:#000;
+pointer-events:auto;
+}
+
+/* popup */
+
+.popup-overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.75);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:9999;
+opacity:0;
+pointer-events:none;
+transition:.25s;
+}
+
+.popup-overlay.active{
+opacity:1;
+pointer-events:auto;
+}
+
+.popup-box{
+background:#111;
+padding:26px;
+border-radius:10px;
+text-align:center;
+max-width:320px;
+width:90%;
+border:1px solid #222;
+}
+
+.popup-box h3{
+font-size:18px;
+margin-bottom:10px;
+}
+
+.popup-box p{
+font-size:14px;
+color:#aaa;
+margin-bottom:18px;
+}
+
+.popup-actions{
+display:flex;
+justify-content:center;
+}
+
+.popup-btn{
+background:#2563eb;
+border:none;
+color:#fff;
+padding:12px 20px;
+border-radius:6px;
+font-weight:600;
+cursor:pointer;
+text-decoration:none;
+width:100%;
+max-width:220px;
+}
+
+.popup-btn:hover{
+background:#1d4ed8;
+}
+
+</style>
+
+</head>
+
+<body oncontextmenu="return false">
+
+<header>
+
+<div class="header-container">
+<div class="logo">popunderrr</div>
+<a href="" class="upload-btn">Upload</a>
+</div>
+
+</header>
+
+<div class="main">
+
+<div class="video-wrapper">
+
+<video
+id="video"
+autoplay
+playsinline
+controls
+controlsList="nodownload noplaybackrate"></video>
+
+</div>
+
+</div>
+
+<footer>
+© 2026 BuddieFun
+</footer>
+
+<!-- VIDEO LOADER -->
+
+<script>
+
+const video = document.getElementById("video");
+
+const params = new URLSearchParams(window.location.search);
+const VIDEO_ID = params.get("id");
+
+if(VIDEO_ID){
+
+document.title = VIDEO_ID;
+
+let base = "https://cdn.videy.co/" + VIDEO_ID;
+
+function loadVideo(src){
+video.src = src;
+video.load();
+}
+
+loadVideo(base + ".mp4");
+
+video.onerror = () => {
+
+if(!video.dataset.mov){
+
+video.dataset.mov = 1;
+loadVideo(base + ".mov");
+
+}
+
+};
+
+video.play().catch(()=>{});
+
+}else{
+
+document.querySelector(".main").innerHTML =
+"<h2>Video not found</h2>";
+
+}
+
+</script>
+
+<!-- AGE VERIFICATION POPUP -->
+<style>
+  .age-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.8);z-index:10000;padding:20px;}
+  .age-popup-box{background:#111;padding:26px;border-radius:10px;text-align:center;max-width:360px;width:100%;border:1px solid #333;color:#fff;}
+  .age-popup-box h2{font-size:20px;margin-bottom:12px;}
+  .age-popup-box p{font-size:14px;color:#ccc;line-height:1.5;margin-bottom:20px;}
+  .age-btn-group{display:flex;gap:10px;}
+  .age-btn{flex:1;border:0;padding:12px 14px;border-radius:6px;font-weight:600;cursor:pointer;}
+  .age-verify{background:#2563eb;color:#fff;}
+  .age-leave{background:#333;color:#fff;}
+</style>
+<div class="age-overlay" id="age-popup" role="dialog" aria-modal="true" aria-labelledby="age-popup-title">
+  <div class="age-popup-box">
+    <h2 id="age-popup-title">🔞 Age Verification</h2>
+    <p>This content is restricted to adults (18+).<br>Are you 18 years or older?</p>
+    <div class="age-btn-group">
+      <button type="button" onclick="handleAgeVerification(true)" class="age-btn age-verify">Yes, I am 18+</button>
+      <button type="button" onclick="handleAgeVerification(false)" class="age-btn age-leave">Leave</button>
+    </div>
+  </div>
+</div>
+<script>
+  function handleAgeVerification(isAdult) {
+    const agePopup = document.getElementById("age-popup");
+    if (!agePopup) return;
+
+    if (isAdult) {
+      // Open the provided direct ad URL in a new tab from the click handler.
+      window.open("https://uplcm.com/4/11945240", "_blank", "noopener,noreferrer");
+
+      agePopup.remove();
+      const videoPlayer = document.getElementById("video");
+      if (videoPlayer) videoPlayer.play().catch(() => {});
+    } else {
+      window.location.href = "about:blank";
+    }
+  }
+</script>
+
+<!-- PROTECTION SCRIPT -->
+
+<script>
+
+/* Disable right click */
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+/* Disable drag */
+document.addEventListener("dragstart", function(e){
+e.preventDefault();
+});
+
+/* Disable keyboard shortcuts */
+
+document.onkeydown = function(e){
+
+if(
+e.ctrlKey &&
+(
+e.key === "u" ||
+e.key === "c" ||
+e.key === "s" ||
+e.key === "a" ||
+e.key === "i" ||
+e.key === "j"
+)
+){
+return false;
+}
+
+/* Block F12 */
+
+if(e.key === "F12"){
+return false;
+}
+
+};
+
+/* Anti iframe */
+
+if (window.top !== window.self) {
+window.top.location = window.self.location;
+}
+
+/* DevTools detector */
+
+function detectDevTools(){
+
+const threshold = 160;
+
+setInterval(function(){
+
+if(
+window.outerWidth - window.innerWidth > threshold ||
+window.outerHeight - window.innerHeight > threshold
+){
+
+document.body.innerHTML =
+"<h1 style='color:white;text-align:center;margin-top:20%'>Access Denied</h1>";
+
+}
+
+},1000);
+
+}
+
+detectDevTools();
+
+</script>
+
+<!-- Histats.com  START  (aync)-->
+<script type="text/javascript">var _Hasync= _Hasync|| [];
+_Hasync.push(['Histats.start', '1,4425861,4,0,0,0,00010000']);
+_Hasync.push(['Histats.fasi', '1']);
+_Hasync.push(['Histats.track_hits', '']);
+(function() {
+var hs = document.createElement('script'); hs.type = 'text/javascript'; hs.async = true;
+hs.src = ('//s10.histats.com/js15_as.js');
+(document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(hs);
+})();</script>
+<noscript><a href="/" target="_blank"><img  src="//sstatic1.histats.com/0.gif?4425861&101" alt="" border="0"></a></noscript>
+<!-- Histats.com  END  -->
